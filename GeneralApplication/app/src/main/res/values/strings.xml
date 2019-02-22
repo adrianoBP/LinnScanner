@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">GeneralApplication</string>
+    <string name="users_endpoing">https://projectsherlock.ddns.net/uk/Linnworks/GeneralApplication/GetUserInformation.php</string>
+    <string name="linnworks_general_IP">https://api.linnworks.net/api</string>
+    <string name="applicationId" tools:ignore="TypographyDashes">3369fed1-7869-4b69-88c9-92276c68c3c3</string>
+    <string name="applicationSecret" tools:ignore="TypographyDashes">9907b70c-7340-47ea-9e1b-fda5b404e901</string>
+    <string name="preference_destination">settings</string>
+    <string name="preference_userId">userId</string>
+    <string name="preference_userFullName">userFullName</string>
+    <string name="preference_userEmail">userEmail</string>
+    <string name="preference_userInstallationToken">userToken</string>
+    <string name="preference_linnworksServer">server</string>
+    <string name="preference_linnworksToken">token</string>
+    <string name="preference_saveLogin">saveLogin</string>
+</resources>
