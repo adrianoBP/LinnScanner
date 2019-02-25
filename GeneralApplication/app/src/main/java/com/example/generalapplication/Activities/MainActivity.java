@@ -12,18 +12,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.R;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.generalapplication.Helpers.Core.CoreInit;
+import static com.example.generalapplication.Helpers.UI.ChangeView;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 
 public class MainActivity extends AppCompatActivity {
 
-    View vHome;
-    LinearLayout llMainLayout;
-    List<View> views;
+    View vHome, vOrders;
+    public  static LinearLayout llMainLayout;
+    public static List<View> views;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +37,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Views Init
+        CoreInit();
+
+        // Views CoreInit
         vHome = getLayoutInflater().inflate(R.layout.layout_home, null);
+        vOrders = getLayoutInflater().inflate(R.layout.layout_orders, null);
 
-        views = Arrays.asList(vHome);
+        views = Arrays.asList(vHome, vOrders);
 
-        // Items Init
+        // Items CoreInit
         llMainLayout = findViewById(R.id.llMainLayout);
 
         // Request permissions
@@ -48,23 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Start main view
         if(ContextCompat.checkSelfPermission( this, Manifest.permission.CAMERA ) == PackageManager.PERMISSION_GRANTED){
-            new Home(this, vHome);
-            changeView(vHome);
+            new OrdersActivity(this, vOrders);
+            ChangeView(vOrders);
         }else{
             CreateBasicSnack("Access to the camera is required to use this application.", null, this);
         }
-
     }
 
-    private void changeView(View view) {  // Delete all views and add specified one
-        for (View v : views) {
-            llMainLayout.removeView(v);
-        }
-        try {
-            view.setLayoutParams(new Toolbar.LayoutParams(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT));
-            llMainLayout.addView(view);
-        } catch (Exception ex) {
-            Log.e("MAIN.CHANGEVIEW", ex.getMessage());
-        }
-    }
+
+
+
 }

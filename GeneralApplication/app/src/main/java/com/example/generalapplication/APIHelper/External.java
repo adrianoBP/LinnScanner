@@ -16,9 +16,9 @@ import org.json.JSONObject;
 
 import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
-import static com.example.generalapplication.Helpers.Util.IsNullOrEmpty;
-import static com.example.generalapplication.Helpers.Util.ReadPreference;
-import static com.example.generalapplication.Helpers.Util.WritePreference;
+import static com.example.generalapplication.Helpers.Core.IsNullOrEmpty;
+import static com.example.generalapplication.Helpers.Core.ReadPreference;
+import static com.example.generalapplication.Helpers.Core.WritePreference;
 
 public class External {
 

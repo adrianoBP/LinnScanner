@@ -10,9 +10,9 @@ import com.example.generalapplication.R;
 
 import static com.example.generalapplication.APIHelper.Internal.RetrieveUserId;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
-import static com.example.generalapplication.Helpers.Util.CheckLoginSaved;
-import static com.example.generalapplication.Helpers.Util.HideKeyboard;
-import static com.example.generalapplication.Helpers.Util.IsNullOrEmpty;
+import static com.example.generalapplication.Helpers.Core.CheckLoginSaved;
+import static com.example.generalapplication.Helpers.Core.HideKeyboard;
+import static com.example.generalapplication.Helpers.Core.IsNullOrEmpty;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // Init
+        // CoreInit
         CheckLoginSaved(this);
         // TODO: check behaviour.
 

@@ -6,13 +6,22 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.example.generalapplication.Activities.LoginActivity;
+import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.R;
 
-import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
-import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Util {
+import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
+
+public class Core {
+
+    public static List<OrderDetails> allOrders;
+
+    public static void CoreInit(){
+        allOrders = new ArrayList<>();
+
+    }
 
     //region SharedPreferences
     public static String ReadPreference(Context context, String preferenceName){
