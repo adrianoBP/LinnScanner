@@ -85,7 +85,7 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             tvOrderCounter.setText(String.valueOf(scannedBarcodes.size()));
             Log.i("SCNR.HANDLE.RESULT", result);
             Log.i("SCNR.HANDLE.FORMAT", format);
-            CreateBasicSnack("Barcode successfully scanned!", null, this);
+//            CreateBasicSnack("Barcode successfully scanned!", null, this);
         }else{
             CreateBasicSnack("Barcode already scanned!", null, this);
         }

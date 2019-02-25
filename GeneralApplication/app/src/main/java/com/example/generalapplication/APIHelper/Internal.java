@@ -17,6 +17,7 @@ import com.example.generalapplication.Classes.FieldCode;
 import com.example.generalapplication.Classes.FieldSorting;
 import com.example.generalapplication.Classes.FieldsFilter;
 import com.example.generalapplication.Classes.OrderDetails;
+import com.example.generalapplication.Classes.OrderTotalsInfo;
 import com.example.generalapplication.Classes.TextFieldFilter;
 import com.example.generalapplication.Classes.TextFieldFilterType;
 import com.example.generalapplication.R;
@@ -34,6 +35,7 @@ import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
 import static com.example.generalapplication.Helpers.Core.allOrders;
+import static com.example.generalapplication.Helpers.Parser.ParseJSONToOrderDetails;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 import static com.example.generalapplication.Helpers.Core.IsNullOrEmpty;
 import static com.example.generalapplication.Helpers.Core.ReadPreference;
@@ -230,10 +232,8 @@ public class Internal {
                                 JSONArray data = responseObject.getJSONArray("Data");
 
                                 for(int i = 0; i<data.length(); i++){
-                                    final JSONObject orderObject = data.getJSONObject(i);
-                                    final OrderDetails order = new OrderDetails(){{
-                                        NumOrderId = orderObject.getInt("NumOrderId");
-                                    }};
+                                    JSONObject orderObject = data.getJSONObject(i);
+                                    OrderDetails order = ParseJSONToOrderDetails(orderObject);
                                     allOrders.add(order);
                                 }
 
@@ -357,8 +357,7 @@ public class Internal {
 
                                     for(int i = 0; i<data.length(); i++){
                                         JSONObject orderObject = data.getJSONObject(i);
-                                        OrderDetails order = new OrderDetails();
-                                        order.NumOrderId = orderObject.getInt("NumOrderId");
+                                        OrderDetails order = ParseJSONToOrderDetails(orderObject);
 
                                         allOrders.add(order);
                                     }

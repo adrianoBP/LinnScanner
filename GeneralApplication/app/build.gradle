@@ -37,4 +37,5 @@ dependencies {
     implementation 'com.airbnb.android:lottie:2.3.1'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'io.github.yavski:fab-speed-dial:1.0.6'
 }

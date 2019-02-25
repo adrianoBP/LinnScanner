@@ -5,25 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabAddOrders"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_camera" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fabAddOrders"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:clickable="true"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintVertical_bias="1.0"-->
+        <!--app:srcCompat="@drawable/ic_camera" />-->
 
     <ListView
         android:id="@+id/lvOrders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <io.github.yavski.fabspeeddial.FabSpeedDial
+        android:id="@+id/fabOrderActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:fabBackgroundTint="@color/colorAccent"
+        app:fabDrawable="@drawable/ic_order_options"
+        app:fabGravity="bottom_end"
+        app:fabMenu="@menu/orders_fab_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

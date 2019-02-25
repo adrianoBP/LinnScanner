@@ -2,9 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clOrder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/clOrder">
+    android:background="@color/backgroundLight">
 
     <TextView
         android:id="@+id/tvUIOrderNumber"
@@ -12,9 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:text="Order #"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,4 +25,46 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvUIOrderNumber"
         app:layout_constraintStart_toEndOf="@+id/tvUIOrderNumber"
         app:layout_constraintTop_toTopOf="@+id/tvUIOrderNumber" />
+
+    <TextView
+        android:id="@+id/tvUIOrderTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Total: "
+        app:layout_constraintStart_toStartOf="@+id/tvUIOrderNumber"
+        app:layout_constraintTop_toBottomOf="@+id/tvUIOrderNumber" />
+
+    <TextView
+        android:id="@+id/tvOrderTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00,00"
+        app:layout_constraintBottom_toBottomOf="@+id/tvUIOrderTotal"
+        app:layout_constraintStart_toEndOf="@+id/tvUIOrderTotal"
+        app:layout_constraintTop_toTopOf="@+id/tvUIOrderTotal" />
+
+    <TextView
+        android:id="@+id/tvOrderCurrency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="UNK"
+        app:layout_constraintBottom_toBottomOf="@+id/tvOrderTotal"
+        app:layout_constraintStart_toEndOf="@+id/tvOrderTotal"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderTotal" />
+
+    <ImageView
+        android:id="@+id/ivSeparator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUIOrderTotal"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@color/colorPrimaryDark" />
 </android.support.constraint.ConstraintLayout>

@@ -3,13 +3,17 @@ package com.example.generalapplication.Activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import com.example.generalapplication.Adapters.OrderAdapter;
 import com.example.generalapplication.R;
+
+import io.github.yavski.fabspeeddial.FabSpeedDial;
 
 import static com.example.generalapplication.Helpers.UI.orderAdapter;
 
@@ -19,9 +23,8 @@ public class OrdersActivity extends AppCompatActivity {
     Context classContext;
     View classView;
 
-    // View elements declaration
     ListView lvOrders;
-    FloatingActionButton fabAddOrders;
+    FabSpeedDial fabOrderActions;
 
     public OrdersActivity(final Context context, final View view){
 
@@ -31,21 +34,33 @@ public class OrdersActivity extends AppCompatActivity {
 
         // View elements initialization
         lvOrders = classView.findViewById(R.id.lvOrders);
-        fabAddOrders = view.findViewById(R.id.fabAddOrders);
+        fabOrderActions = classView.findViewById(R.id.fabOrderActions);
+
 
         orderAdapter = new OrderAdapter(classContext);
         lvOrders.setAdapter(orderAdapter);
 
-        fabAddOrders.setOnClickListener(new View.OnClickListener() {
+        fabOrderActions.setMenuListener(new FabSpeedDial.MenuListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onPrepareMenu(NavigationMenu navigationMenu) {
+                return true;
+            }
 
-                Intent cameraIntent = new Intent(context, ScannerActivity.class);
-                context.startActivity(cameraIntent);
+            @Override
+            public boolean onMenuItemSelected(MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.orderOptionsScanner:
+                        Intent cameraIntent = new Intent(context, ScannerActivity.class);
+                        context.startActivity(cameraIntent);
+                        break;
+                }
+                return true;
+            }
+
+            @Override
+            public void onMenuClosed() {
 
             }
         });
-
-//        GetOpenOrders(classContext);
     }
 }

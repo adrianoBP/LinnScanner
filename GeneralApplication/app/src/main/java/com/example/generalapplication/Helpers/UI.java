@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.generalapplication.Adapters.OrderAdapter;
+import com.example.generalapplication.R;
 
 import static com.example.generalapplication.Activities.MainActivity.llMainLayout;
 import static com.example.generalapplication.Activities.MainActivity.views;
@@ -18,13 +19,13 @@ public class UI {
 
     public static void CreateBasicSnack(String message, Integer length, Context context){
         length = length != null ? length : 3000;
-        Snackbar.make(((Activity)context).findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
+        Snackbar.make(((Activity)context).findViewById(android.R.id.content), message, length)
                 .setAction("CLOSE", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                     }
                 })
-                .setActionTextColor(context.getResources().getColor(android.R.color.holo_red_light))
+                .setActionTextColor(context.getResources().getColor(R.color.colorAccent))
                 .show();
     }
 
