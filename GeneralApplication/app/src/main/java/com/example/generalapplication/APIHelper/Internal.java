@@ -16,6 +16,7 @@ import com.example.generalapplication.Activities.MainActivity;
 import com.example.generalapplication.Classes.FieldCode;
 import com.example.generalapplication.Classes.FieldSorting;
 import com.example.generalapplication.Classes.FieldsFilter;
+import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.Classes.OrderTotalsInfo;
 import com.example.generalapplication.Classes.TextFieldFilter;
@@ -34,6 +35,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
+import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUUIDfromName;
+import static com.example.generalapplication.Helpers.Core.allBarcodes;
+import static com.example.generalapplication.Helpers.Core.allLocations;
 import static com.example.generalapplication.Helpers.Core.allOrders;
 import static com.example.generalapplication.Helpers.Parser.ParseJSONToOrderDetails;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
@@ -298,17 +302,18 @@ public class Internal {
         requestQueue.add(retrieveUIDRequest);
     }
 
-    public static void GetAllOrdersByBarcodes(final Context context, List<String> barcodes){
+    public static void GetAllOrdersByBarcodes(final Context context, Boolean clearOrders, final Boolean finishActivity){
 
         final String logLocation = "API.INT.GETOO";
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Orders/GetOpenOrders";
 
-        allOrders = new ArrayList<>();
+        if(clearOrders)
+            allOrders = new ArrayList<>();
 
         final List<UUID> activeCalls = new ArrayList<>();
 
-        for(final String barcode : barcodes){
+        for(final String barcode : allBarcodes){
 
             final UUID currentCallID = UUID.randomUUID();
             activeCalls.add(currentCallID);
@@ -335,7 +340,10 @@ public class Internal {
 //                    };
 //                }};
 //            }};
-            final UUID fulfilmentCenter = new UUID(0L, 0L);
+
+//            final UUID fulfilmentCenter = new UUID(0L, 0L);
+            final UUID fulfilmentCenter = GetPreferredLocationUUIDfromName(context);
+
 
             StringRequest retrieveUIDRequest = new StringRequest(
                     Request.Method.POST,
@@ -376,7 +384,8 @@ public class Internal {
                                 activeCalls.remove(currentCallID);
                                 if(activeCalls.size() == 0){
                                     orderAdapter.notifyDataSetChanged();
-                                    ((Activity)context).finish();
+                                    if (finishActivity)
+                                        ((Activity)context).finish();
                                 }
                             }
                         }
@@ -395,7 +404,8 @@ public class Internal {
                                 activeCalls.remove(currentCallID);
                                 if(activeCalls.size() == 0){
                                     orderAdapter.notifyDataSetChanged();
-                                    ((Activity)context).finish();
+                                    if (finishActivity)
+                                        ((Activity)context).finish();
                                 }
                             }
                         }
@@ -429,9 +439,87 @@ public class Internal {
 
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(retrieveUIDRequest);
-
         }
-
     }
 
+    public static void GetStockLocations(final Context context){
+
+        final String logLocation = "HLPR.INT.GSTLC";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Inventory/GetStockLocations";
+
+        StringRequest retrieveUIDRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        boolean displayError = false;
+
+                        try{
+
+                            JSONArray locationsJSONArray = new JSONArray(response);
+
+                            if (locationsJSONArray.length() > 0)
+                                allLocations = new ArrayList<>();
+
+                            for(int i = 0; i < locationsJSONArray.length(); i++) {
+
+                                final JSONObject locationObject = locationsJSONArray.getJSONObject(i);
+
+                                allLocations.add(new InventoryStockLocation(){{
+                                        StockLocationId = UUID.fromString(locationObject.getString("StockLocationId"));
+                                        LocationName = locationObject.getString("LocationName");
+                                        IsFulfillmentCenter = locationObject.getBoolean("IsFulfillmentCenter");
+                                        BinRack = locationObject.isNull("BinRack") ? "" : locationObject.getString("BinRack");
+                                        IsWarehouseManaged = locationObject.getBoolean("IsWarehouseManaged");
+                                    }});
+
+                            }
+
+                        }catch (JSONException jex){
+                            displayError = true;
+                            Log.e(logLocation, jex.getMessage());
+                        }catch (Exception ex){
+                            displayError = true;
+                            Log.e(logLocation, ex.getMessage());
+                        }finally {
+                            if (displayError) {
+                                CreateBasicSnack("Unable to Get user locations!", null, context);
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try{
+                            JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                            String errorMessage =  errorObject.getString("Message");
+                            Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                            CreateBasicSnack(errorMessage, null, context);
+                        }catch (Exception ex){
+                            Log.e(logLocation, ex.getMessage());
+                        }
+                    }
+                }
+        ){
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(retrieveUIDRequest);
+    }
 }

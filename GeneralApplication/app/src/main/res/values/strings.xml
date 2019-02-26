@@ -12,4 +12,5 @@
     <string name="preference_linnworksServer">server</string>
     <string name="preference_linnworksToken">token</string>
     <string name="preference_saveLogin">saveLogin</string>
+    <string name="preference_ordersViewLocation">location</string>
 </resources>

@@ -1,10 +1,8 @@
 package com.example.generalapplication.Activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.internal.NavigationMenu;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +13,8 @@ import com.example.generalapplication.R;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 
+import static com.example.generalapplication.APIHelper.Internal.GetAllOrdersByBarcodes;
+import static com.example.generalapplication.Helpers.Core.WritePreference;
 import static com.example.generalapplication.Helpers.UI.orderAdapter;
 
 public class OrdersActivity extends AppCompatActivity {
@@ -48,10 +48,24 @@ public class OrdersActivity extends AppCompatActivity {
 
             @Override
             public boolean onMenuItemSelected(MenuItem menuItem) {
+                Intent cameraIntent = new Intent(context, ScannerActivity.class);
+
                 switch (menuItem.getItemId()){
-                    case R.id.orderOptionsScanner:
-                        Intent cameraIntent = new Intent(context, ScannerActivity.class);
+                    case R.id.orderOptionsnNewScans:
+                        cameraIntent.putExtra("SCANNER_MODE", "NEW");
                         context.startActivity(cameraIntent);
+                        break;
+                    case R.id.orderOptionsnAddScans:
+                        cameraIntent.putExtra("SCANNER_MODE", "ADD");
+                        context.startActivity(cameraIntent);
+                        break;
+                    case R.id.orderOptionsnFilters:
+                        WritePreference(classContext, context.getString(R.string.preference_ordersViewLocation), "Default");
+                        GetAllOrdersByBarcodes(classContext, true, false);
+                        break;
+                    case R.id.orderOptionsnFilters2:
+                        WritePreference(classContext, context.getString(R.string.preference_ordersViewLocation), "3PL");
+                        GetAllOrdersByBarcodes(classContext, true, false);
                         break;
                 }
                 return true;

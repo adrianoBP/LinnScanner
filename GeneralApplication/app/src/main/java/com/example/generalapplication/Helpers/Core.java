@@ -6,20 +6,29 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
+import static com.example.generalapplication.APIHelper.Internal.GetStockLocations;
 
 public class Core {
 
     public static List<OrderDetails> allOrders;
+    public static List<InventoryStockLocation> allLocations;
+    public static List<String> allBarcodes;
 
-    public static void CoreInit(){
+    public static void CoreInit(Context context){
+        allLocations = new ArrayList<>();
         allOrders = new ArrayList<>();
+        allBarcodes = new ArrayList<>();
+
+        GetStockLocations(context);
 
     }
 
@@ -66,6 +75,25 @@ public class Core {
         if(!IsNullOrEmpty(loginPreference) && loginPreference.equals("YES")){
             AuthorizeByApplication(context, true);
         }
+    }
+
+    public static UUID GetPreferredLocationUUIDfromName(Context context){
+
+        String locationPreference = ReadPreference(context, context.getString(R.string.preference_ordersViewLocation));
+
+        if(locationPreference == null){
+            return new UUID(0L, 0L);
+        }
+
+        for (InventoryStockLocation location :
+                allLocations) {
+            if(location.LocationName.equals(locationPreference)){
+                return location.StockLocationId;
+            }
+        }
+
+        return new UUID(0L, 0L);
+
     }
 
 }

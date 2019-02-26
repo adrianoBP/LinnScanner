@@ -13,32 +13,35 @@ import com.example.generalapplication.R;
 import com.google.zxing.Result;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 import static com.example.generalapplication.APIHelper.Internal.GetAllOrdersByBarcodes;
+import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private ZXingScannerView mScannerView;
 
-    public static List<String> scannedBarcodes;
 
     TextView tvOrderCounter;
     FloatingActionButton fabFlash, fabScanComplete;
+    String scannerMode = "NEW";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
 
+        scannerMode = getIntent().hasExtra("SCANNER_MODE") ? getIntent().getStringExtra("SCANNER_MODE") : "NEW";
+        if (scannerMode.equals("NEW")){
+            allBarcodes = new ArrayList<>();
+        }
+
         ViewGroup contentFrame = findViewById(R.id.content_frame);
         mScannerView = new ZXingScannerView(this);
         contentFrame.addView(mScannerView);
-
-        scannedBarcodes = new ArrayList<>();
 
         tvOrderCounter = findViewById(R.id.tvOrdersCounter);
         fabFlash = findViewById(R.id.fabToggleFlash);
@@ -55,7 +58,8 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
         fabScanComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GetAllOrdersByBarcodes(ScannerActivity.this, scannedBarcodes);
+                GetAllOrdersByBarcodes(ScannerActivity.this, scannerMode.equals("NEW"), false);
+                finish();
             }
         });
 
@@ -75,14 +79,20 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mScannerView.stopCamera();
+    }
+
+    @Override
     public void handleResult(Result rawResult) {
 
         String result = rawResult.getText();
         String format = rawResult.getBarcodeFormat().toString();
 
-        if(!scannedBarcodes.contains(result)){
-            scannedBarcodes.add(result);
-            tvOrderCounter.setText(String.valueOf(scannedBarcodes.size()));
+        if(!allBarcodes.contains(result)){
+            allBarcodes.add(result);
+            tvOrderCounter.setText(String.valueOf(allBarcodes.size()));
             Log.i("SCNR.HANDLE.RESULT", result);
             Log.i("SCNR.HANDLE.FORMAT", format);
 //            CreateBasicSnack("Barcode successfully scanned!", null, this);

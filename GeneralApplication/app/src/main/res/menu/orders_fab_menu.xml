@@ -2,8 +2,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
-        android:id="@+id/orderOptionsScanner"
+        android:id="@+id/orderOptionsnFilters"
+        android:icon="@drawable/ic_filter"
+        android:title="Edit filters"
+        />
+    <item
+        android:id="@+id/orderOptionsnFilters2"
+        android:icon="@drawable/ic_filter"
+        android:title="Edit filters"
+        />
+    <item
+        android:id="@+id/orderOptionsnAddScans"
+        android:icon="@drawable/ic_add"
+        android:title="Add barcodes"
+        />
+    <item
+        android:id="@+id/orderOptionsnNewScans"
         android:icon="@drawable/ic_camera"
         android:title="Scan barcodes"
         />
+
 </menu>

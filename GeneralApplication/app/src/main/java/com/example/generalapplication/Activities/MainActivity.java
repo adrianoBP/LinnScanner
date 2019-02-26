@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        CoreInit();
+        CoreInit(this);
 
         // Views CoreInit
         vHome = getLayoutInflater().inflate(R.layout.layout_home, null);
