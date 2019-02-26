@@ -2,6 +2,7 @@ package com.example.generalapplication.Helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
 import static com.example.generalapplication.APIHelper.Internal.GetStockLocations;
+import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 
 public class Core {
 
@@ -93,7 +95,29 @@ public class Core {
         }
 
         return new UUID(0L, 0L);
+    }
 
+    public static List<String> GetLocationNames(Context context){
+
+        List<String> locationNames = new ArrayList<>();
+
+        for (InventoryStockLocation location:
+             allLocations) {
+            locationNames.add(location.LocationName);
+        }
+
+        return locationNames;
+    }
+
+
+    public static OrderDetails GetOrderByUUID(UUID orderId){
+        for (OrderDetails order :
+                allOrders) {
+            if (order.OrderId.equals(orderId)){
+                return order;
+            }
+        }
+        return null;
     }
 
 }

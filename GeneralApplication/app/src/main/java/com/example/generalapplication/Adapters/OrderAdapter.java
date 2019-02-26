@@ -48,6 +48,9 @@ public class OrderAdapter extends BaseAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         view = ((Activity)classContext).getLayoutInflater().inflate(R.layout.adapter_order, null);
 
+        multiSelectedOrders = new ArrayList<>();
+        multiSelectEnabled = false;
+
         final TextView tvOrderNumber = view.findViewById(R.id.tvOrderNumber);
         final TextView tvOrderTotal = view.findViewById(R.id.tvOrderTotal);
         final TextView tvOrderCurrency = view.findViewById(R.id.tvOrderCurrency);

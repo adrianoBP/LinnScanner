@@ -7,9 +7,9 @@
         android:title="Edit filters"
         />
     <item
-        android:id="@+id/orderOptionsnFilters2"
-        android:icon="@drawable/ic_filter"
-        android:title="Edit filters"
+        android:id="@+id/orderOptionsnProcess"
+        android:icon="@drawable/ic_process"
+        android:title="Process orders"
         />
     <item
         android:id="@+id/orderOptionsnAddScans"

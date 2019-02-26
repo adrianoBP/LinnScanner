@@ -18,7 +18,6 @@ import com.example.generalapplication.Classes.FieldSorting;
 import com.example.generalapplication.Classes.FieldsFilter;
 import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
-import com.example.generalapplication.Classes.OrderTotalsInfo;
 import com.example.generalapplication.Classes.TextFieldFilter;
 import com.example.generalapplication.Classes.TextFieldFilterType;
 import com.example.generalapplication.R;
@@ -35,6 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
+import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUUIDfromName;
 import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.Core.allLocations;
@@ -302,6 +302,9 @@ public class Internal {
         requestQueue.add(retrieveUIDRequest);
     }
 
+
+
+    // TODO: option to search on processed orders ( SQL )
     public static void GetAllOrdersByBarcodes(final Context context, Boolean clearOrders, final Boolean finishActivity){
 
         final String logLocation = "API.INT.GETOO";
@@ -310,6 +313,9 @@ public class Internal {
 
         if(clearOrders)
             allOrders = new ArrayList<>();
+
+        multiSelectedOrders = new ArrayList<>();
+
 
         final List<UUID> activeCalls = new ArrayList<>();
 
@@ -440,6 +446,8 @@ public class Internal {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(retrieveUIDRequest);
         }
+
+        orderAdapter.notifyDataSetChanged();
     }
 
     public static void GetStockLocations(final Context context){
@@ -448,7 +456,7 @@ public class Internal {
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Inventory/GetStockLocations";
 
-        StringRequest retrieveUIDRequest = new StringRequest(
+        StringRequest getStockLocations = new StringRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
@@ -520,6 +528,95 @@ public class Internal {
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(retrieveUIDRequest);
+        requestQueue.add(getStockLocations);
+    }
+
+    public static void ProcessOrders(final Context context, List<UUID> orderIDs, final UUID locationID){
+
+        final String logLocation = "HLPR.INT.PRCSOR";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Orders/ProcessOrder";
+
+        final List<UUID> activeCalls = new ArrayList<>();
+
+        for(final UUID orderID : orderIDs) {
+
+            final UUID currentCallID = UUID.randomUUID();
+            activeCalls.add(currentCallID);
+
+            StringRequest processOrder = new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            try {
+                                JSONObject responseObject = new JSONObject(response);
+
+                                if(responseObject.has("Error")){
+                                    Log.e(logLocation, responseObject.getString("Error"));
+                                }else{
+                                    activeCalls.remove(currentCallID);
+                                    if (activeCalls.size() == 0) {
+//                                RemoveProcessedOrders();
+                                        GetAllOrdersByBarcodes(context, true, false);
+                                        Log.i(logLocation, "Order(s) processed.");
+                                    }
+                                }
+
+
+                            }catch (Exception ex){
+                                Log.e(logLocation, ex.getMessage());
+                                CreateBasicSnack("Error while processing the order(s)!", null, context);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            try {
+                                JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                                String errorMessage = errorObject.getString("Message");
+                                Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                                CreateBasicSnack(errorMessage, null, context);
+                            } catch (Exception ex) {
+                                Log.e(logLocation, ex.getMessage());
+                            }finally {
+                                activeCalls.remove(currentCallID);
+                                if(activeCalls.size() == 0){
+                                    GetAllOrdersByBarcodes(context, true, false);
+                                    Log.i(logLocation, "Order(s) processed ERROR.");
+                                }
+                            }
+                        }
+                    }
+            ) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/x-www-form-urlencoded; charset=UTF-8";
+                }
+
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                    return params;
+                }
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("orderId", orderID.toString());
+                    params.put("scanPerformed", String.valueOf(false));
+                    params.put("locationId", locationID.toString());
+                    params.put("allowZeroAndNegativeBatchQty", String.valueOf(false));
+                    return params;
+                }
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            requestQueue.add(processOrder);
+        }
     }
 }

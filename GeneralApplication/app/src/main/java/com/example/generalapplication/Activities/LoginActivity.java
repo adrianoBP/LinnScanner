@@ -46,7 +46,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // CoreInit
         CheckLoginSaved(this);
-        // TODO: check behaviour.
 
     }
 }

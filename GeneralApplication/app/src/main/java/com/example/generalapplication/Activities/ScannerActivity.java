@@ -28,16 +28,12 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
     TextView tvOrderCounter;
     FloatingActionButton fabFlash, fabScanComplete;
     String scannerMode = "NEW";
+    Boolean firstScanDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
-
-        scannerMode = getIntent().hasExtra("SCANNER_MODE") ? getIntent().getStringExtra("SCANNER_MODE") : "NEW";
-        if (scannerMode.equals("NEW")){
-            allBarcodes = new ArrayList<>();
-        }
 
         ViewGroup contentFrame = findViewById(R.id.content_frame);
         mScannerView = new ZXingScannerView(this);
@@ -89,6 +85,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
 
         String result = rawResult.getText();
         String format = rawResult.getBarcodeFormat().toString();
+
+        if(!firstScanDone){
+            scannerMode = getIntent().hasExtra("SCANNER_MODE") ? getIntent().getStringExtra("SCANNER_MODE") : "NEW";
+            if (scannerMode.equals("NEW")){
+                allBarcodes = new ArrayList<>();
+            }
+            firstScanDone = true;
+        }
 
         if(!allBarcodes.contains(result)){
             allBarcodes.add(result);

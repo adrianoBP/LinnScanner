@@ -17,9 +17,9 @@ public class UI {
 
     public static OrderAdapter orderAdapter;
 
-    public static void CreateBasicSnack(String message, Integer length, Context context){
+    public static void CreateBasicSnack(String message, Integer length, Context context) {
         length = length != null ? length : 3000;
-        Snackbar.make(((Activity)context).findViewById(android.R.id.content), message, length)
+        Snackbar.make(((Activity) context).findViewById(android.R.id.content), message, length)
                 .setAction("CLOSE", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
