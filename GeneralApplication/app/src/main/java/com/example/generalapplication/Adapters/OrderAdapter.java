@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.R;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static android.support.constraint.Constraints.TAG;
 import static com.example.generalapplication.Helpers.Core.allOrders;
 import static com.example.generalapplication.Helpers.Core.allSources;
 
@@ -74,12 +76,27 @@ public class OrderAdapter extends BaseAdapter {
         if(allSources.containsKey(currentOrder.GeneralInfo.Source)){
             final String url  = allSources.get(currentOrder.GeneralInfo.Source).imageUrl;
 
-            try {
-                Bitmap bitmap = Picasso.with(classContext).load("http://i.imgur.com/DvpvklR.png").get();
-                Log.i("", "");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Picasso.with(classContext).load(url).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    ivSourceicon.setImageBitmap(bitmap);
+                    Log.i(TAG, "The image was obtained correctly");
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                    Log.e(TAG, "The image was not obtained");
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    Log.e(TAG, "Getting ready to get the image");
+                    //Here you should place a loading gif in the ImageView
+                    //while image is being obtained.
+                }
+            });
+
+            Log.i("", "");
 
 
 //            new AsyncTask<Void,String,String>(){
