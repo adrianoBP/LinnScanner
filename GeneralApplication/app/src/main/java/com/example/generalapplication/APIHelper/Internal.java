@@ -3,16 +3,20 @@ package com.example.generalapplication.APIHelper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.generalapplication.Activities.MainActivity;
+import com.example.generalapplication.Classes.CustomSource;
 import com.example.generalapplication.Classes.FieldCode;
 import com.example.generalapplication.Classes.FieldSorting;
 import com.example.generalapplication.Classes.FieldsFilter;
@@ -26,6 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +45,7 @@ import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUU
 import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.Core.allLocations;
 import static com.example.generalapplication.Helpers.Core.allOrders;
+import static com.example.generalapplication.Helpers.Core.allSources;
 import static com.example.generalapplication.Helpers.Parser.ParseJSONToOrderDetails;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 import static com.example.generalapplication.Helpers.Core.IsNullOrEmpty;
@@ -52,7 +59,7 @@ public class Internal {
 
         final String logLocation = "API.INT.RETRIEVEUSERID";
 
-        String url = context.getString(R.string.linnworks_general_IP) + "/Auth/MultiLogin";
+        String url = context.getString(R.string.linnworks_generalApi_IP) + "/Auth/MultiLogin";
 
         StringRequest retrieveUIDRequest = new StringRequest(
                 Request.Method.POST,
@@ -129,7 +136,7 @@ public class Internal {
 
         final String logLocation = "API.INT.AUTHBYAPP";
 
-        String url = context.getString(R.string.linnworks_general_IP) + "/Auth/AuthorizeByApplication";
+        String url = context.getString(R.string.linnworks_generalApi_IP) + "/Auth/AuthorizeByApplication";
 
         StringRequest retrieveUIDRequest = new StringRequest(
                 Request.Method.POST,
@@ -452,7 +459,7 @@ public class Internal {
 
     public static void GetStockLocations(final Context context){
 
-        final String logLocation = "HLPR.INT.GSTLC";
+        final String logLocation = "API.INT.GSTLC";
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Inventory/GetStockLocations";
 
@@ -533,7 +540,7 @@ public class Internal {
 
     public static void ProcessOrders(final Context context, List<UUID> orderIDs, final UUID locationID){
 
-        final String logLocation = "HLPR.INT.PRCSOR";
+        final String logLocation = "API.INT.PRCSOR";
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Orders/ProcessOrder";
 
@@ -618,5 +625,84 @@ public class Internal {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(processOrder);
         }
+    }
+
+    public static void GetAllSources(final Context context){
+
+        final String logLocation = "API.INT.GETSRC";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/OpenOrders/GetAvailableChannels";
+
+        JsonObjectRequest sendJsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+
+                        try {
+                            JSONArray channelsArray = response.getJSONArray("Channels");
+
+                            if(response.has("Error")){
+                                Log.e(logLocation, response.getString("Error"));
+                            }else{
+
+                                for (int i = 0; i < channelsArray.length(); i++){
+
+                                    JSONObject channelObject = channelsArray.getJSONObject(i);
+
+                                    final String channelName = channelObject.getString("Name");
+                                    final String channelIdentifier = channelObject.getString("Identifier");
+                                    final String channelImageUrl  = URLUtil.isValidUrl(channelObject.getString("Logo") ) ? channelObject.getString("Logo")  : context.getString(R.string.linnworks_general_IP) + channelObject.getString("Logo") ;
+
+                                    allSources.put(channelIdentifier.toUpperCase(), new CustomSource(){{
+                                        name = channelName;
+                                        identifier = channelIdentifier;
+                                        imageUrl = channelImageUrl;
+                                    }});
+
+                                }
+
+                            }
+
+
+                        }catch (Exception ex){
+                            Log.e(logLocation, ex.getMessage());
+                            CreateBasicSnack("Error while retrieving the channels!", null, context);
+                        }
+
+
+
+                        Log.i(logLocation, "RESPONSE RETRIEVED");
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        try {
+                            JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                            String errorMessage = errorObject.getString("Message");
+                            Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                            CreateBasicSnack(errorMessage, null, context);
+                        } catch (Exception ex) {
+                            Log.e(logLocation, ex.getMessage());
+                        }
+
+                    }
+                }
+        ){
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(sendJsonRequest);
+
     }
 }

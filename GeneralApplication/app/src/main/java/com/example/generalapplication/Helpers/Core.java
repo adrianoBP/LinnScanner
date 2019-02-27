@@ -7,15 +7,19 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.generalapplication.Classes.CustomSource;
 import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
+import static com.example.generalapplication.APIHelper.Internal.GetAllSources;
 import static com.example.generalapplication.APIHelper.Internal.GetStockLocations;
 import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 
@@ -24,13 +28,16 @@ public class Core {
     public static List<OrderDetails> allOrders;
     public static List<InventoryStockLocation> allLocations;
     public static List<String> allBarcodes;
+    public static Map<String, CustomSource> allSources;
 
     public static void CoreInit(Context context){
         allLocations = new ArrayList<>();
         allOrders = new ArrayList<>();
         allBarcodes = new ArrayList<>();
+        allSources = new HashMap<>();
 
         GetStockLocations(context);
+        GetAllSources(context);
 
     }
 

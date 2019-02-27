@@ -48,7 +48,7 @@ public class OrderGeneralInfo {
     /// <summary>
     /// Order marker (0 = NOT TAG,1 = Tag 1,2 = Tag 2,3 = Tag 3,4 = Tag 4,5 = Tag 5,6 = Tag 6,7 = Parked) 
     /// </summary>
-    public Byte Marker;
+    public Integer Marker;
 
     /// <summary>
     /// Is the order parked? 
