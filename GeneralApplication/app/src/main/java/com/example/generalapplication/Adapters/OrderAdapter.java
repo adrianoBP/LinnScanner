@@ -20,14 +20,10 @@ import com.example.generalapplication.R;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static android.support.constraint.Constraints.TAG;
 import static com.example.generalapplication.Helpers.Core.allOrders;
 import static com.example.generalapplication.Helpers.Core.allSources;
 
@@ -36,6 +32,7 @@ public class OrderAdapter extends BaseAdapter {
     private Context classContext;
     public static List<UUID> multiSelectedOrders = new ArrayList<>();
     public static Boolean multiSelectEnabled = false;
+    String logLocation = "ADPT.ORDER";
 
     public OrderAdapter(Context context){
         classContext = context;
@@ -71,7 +68,7 @@ public class OrderAdapter extends BaseAdapter {
         final TextView tvOrderCurrency = view.findViewById(R.id.tvOrderCurrency);
         final ConstraintLayout clParent = view.findViewById(R.id.clOrder);
         final Boolean[] isSelected = {false};
-        final ImageView ivSourceicon = view.findViewById(R.id.ivSourceIcon);
+        final ImageView ivSourceIcon = view.findViewById(R.id.ivSourceIcon);
 
         if(allSources.containsKey(currentOrder.GeneralInfo.Source)){
             final String url  = allSources.get(currentOrder.GeneralInfo.Source).imageUrl;
@@ -79,87 +76,20 @@ public class OrderAdapter extends BaseAdapter {
             Picasso.with(classContext).load(url).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    ivSourceicon.setImageBitmap(bitmap);
-                    Log.i(TAG, "The image was obtained correctly");
+                    ivSourceIcon.setImageBitmap(bitmap);
                 }
 
                 @Override
                 public void onBitmapFailed(Drawable errorDrawable) {
-                    Log.e(TAG, "The image was not obtained");
+                    Log.w(logLocation, "The image was not obtained");
                 }
 
                 @Override
                 public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    Log.e(TAG, "Getting ready to get the image");
                     //Here you should place a loading gif in the ImageView
                     //while image is being obtained.
                 }
             });
-
-            Log.i("", "");
-
-
-//            new AsyncTask<Void,String,String>(){
-//
-//                @Override
-//                protected String doInBackground(Void... params) {
-//                    InputStream is = null;
-//                    try {
-//                        is = (InputStream) new URL(url).getContent();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Drawable imageFromUrl = Drawable.createFromStream(is, "src name");
-//                    ivSourceicon.setImageDrawable(imageFromUrl);
-//                    Log.d("", "");
-//                    return "";
-//                }
-//
-//                protected void onPostExecute(String results){
-//                    // Response returned by doInBackGround() will be received
-//                    // by onPostExecute(String results).
-//                    // Now manipulate your jason/xml String(results).
-//                }
-//
-//            }.execute();
-
-//                new Thread(){
-//                    public void run(){
-//                        try {
-//                            InputStream is = (InputStream) new URL(url).getContent();
-//                            Drawable d = Drawable.createFromStream(is, "src name");
-//                            Log.d("", "");
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }.run();
-
-
-//                Picasso.with(classContext).load(url).into(new Target() {
-//                    @Override
-//                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                        try {
-//                            Bitmap b =  Picasso.with(classContext).load(allSources.get(currentOrder.GeneralInfo.Source).imageUrl).get();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                        Log.d("", "");
-//                    }
-//
-//                    @Override
-//                    public void onBitmapFailed(Drawable errorDrawable) {
-//                        Log.d("", "");
-//
-//                    }
-//
-//                    @Override
-//                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                        Log.d("", "");
-//
-//                    }
-//                });
-
         }
 
         tvOrderNumber.setText(currentOrder.NumOrderId.toString());
@@ -169,7 +99,6 @@ public class OrderAdapter extends BaseAdapter {
         clParent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 if(multiSelectEnabled){
                     if(!isSelected[0]){

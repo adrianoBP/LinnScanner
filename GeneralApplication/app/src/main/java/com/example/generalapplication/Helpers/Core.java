@@ -21,7 +21,6 @@ import java.util.UUID;
 import static com.example.generalapplication.APIHelper.Internal.AuthorizeByApplication;
 import static com.example.generalapplication.APIHelper.Internal.GetAllSources;
 import static com.example.generalapplication.APIHelper.Internal.GetStockLocations;
-import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 
 public class Core {
 

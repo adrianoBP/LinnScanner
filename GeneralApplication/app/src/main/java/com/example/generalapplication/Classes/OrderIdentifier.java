@@ -2,7 +2,7 @@ package com.example.generalapplication.Classes;
 
 public class OrderIdentifier{
 
-        public Byte IdentifierId;
+        public Integer IdentifierId;
 
         public String Name;
 
