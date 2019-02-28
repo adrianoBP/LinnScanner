@@ -8,23 +8,13 @@
     android:background="@color/backgroundLight">
 
     <TextView
-        android:id="@+id/tvUIOrderNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Order #"
-        app:layout_constraintStart_toEndOf="@+id/ivSourceIcon"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/tvOrderNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="000000"
-        app:layout_constraintBottom_toBottomOf="@+id/tvUIOrderNumber"
-        app:layout_constraintStart_toEndOf="@+id/tvUIOrderNumber"
-        app:layout_constraintTop_toTopOf="@+id/tvUIOrderNumber" />
+        android:layout_marginTop="8dp"
+        android:text="#000000"
+        app:layout_constraintStart_toStartOf="@+id/ivSourceIcon"
+        app:layout_constraintTop_toBottomOf="@+id/ivSourceIcon" />
 
     <TextView
         android:id="@+id/tvUIOrderTotal"
@@ -32,8 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Total: "
-        app:layout_constraintStart_toStartOf="@+id/tvUIOrderNumber"
-        app:layout_constraintTop_toBottomOf="@+id/tvUIOrderNumber" />
+        app:layout_constraintStart_toStartOf="@+id/tvOrderNumber"
+        app:layout_constraintTop_toBottomOf="@+id/tvOrderNumber" />
 
     <TextView
         android:id="@+id/tvOrderTotal"
@@ -70,11 +60,67 @@
 
     <ImageView
         android:id="@+id/ivSourceIcon"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvUIOrderNumber"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvUIOrderNumber"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/box" />
+
+    <ImageView
+        android:id="@+id/ivInvoice"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivSourceIcon"
+        app:layout_constraintStart_toEndOf="@+id/ivSourceIcon"
+        app:layout_constraintTop_toTopOf="@+id/ivSourceIcon"
+        app:srcCompat="@drawable/label" />
+
+    <ImageView
+        android:id="@+id/ivShippingLabel"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivSourceIcon"
+        app:layout_constraintStart_toEndOf="@+id/ivInvoice"
+        app:layout_constraintTop_toTopOf="@+id/ivSourceIcon"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/tag" />
+
+    <TextView
+        android:id="@+id/tvSource"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Source"
+        android:textAlignment="textEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/ivInvoice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/ivInvoice" />
+
+    <TextView
+        android:id="@+id/tvSubsource"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="SubSource"
+        android:textAlignment="textEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/tvOrderNumber"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/tvOrderNumber" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".4" />
 </android.support.constraint.ConstraintLayout>

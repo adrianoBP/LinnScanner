@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.View;
@@ -69,6 +68,13 @@ public class OrderAdapter extends BaseAdapter {
         final ConstraintLayout clParent = view.findViewById(R.id.clOrder);
         final Boolean[] isSelected = {false};
         final ImageView ivSourceIcon = view.findViewById(R.id.ivSourceIcon);
+        ImageView  ivInvoice= view.findViewById(R.id.ivInvoice);
+        ImageView ivShippingLabel = view.findViewById(R.id.ivShippingLabel);
+        TextView tvSource = view.findViewById(R.id.tvSource);
+        TextView tvSubsrouce = view.findViewById(R.id.tvSubsource);
+
+//        ivInvoice.setColorFilter(classContext.getResources().getColor(R.color.commonGreyLight));
+//        ivShippingLabel.setColorFilter(classContext.getResources().getColor(R.color.commonGreyLight));
 
         if(allSources.containsKey(currentOrder.GeneralInfo.Source)){
             final String url  = allSources.get(currentOrder.GeneralInfo.Source).imageUrl;
@@ -92,9 +98,19 @@ public class OrderAdapter extends BaseAdapter {
             });
         }
 
-        tvOrderNumber.setText(currentOrder.NumOrderId.toString());
+        tvOrderNumber.setText("#" + currentOrder.NumOrderId.toString());
         tvOrderTotal.setText(currentOrder.TotalsInfo.TotalCharge.toString());
         tvOrderCurrency.setText(currentOrder.TotalsInfo.Currency);
+        tvSource.setText(currentOrder.GeneralInfo.Source);
+        tvSubsrouce.setText(currentOrder.GeneralInfo.SubSource);
+
+        if(currentOrder.GeneralInfo.InvoicePrinted){
+            ivInvoice.setColorFilter(classContext.getResources().getColor(R.color.commonGreen));
+        }
+
+        if(currentOrder.GeneralInfo.LabelPrinted){
+            ivShippingLabel.setColorFilter(classContext.getResources().getColor(R.color.commonGreen));
+        }
 
         clParent.setOnClickListener(new View.OnClickListener() {
             @Override
