@@ -1,5 +1,6 @@
 package com.example.generalapplication.Activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.example.generalapplication.Adapters.OrderAdapter;
+import com.example.generalapplication.Classes.PrinterStatus;
 import com.example.generalapplication.R;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
@@ -106,6 +108,10 @@ public class OrdersActivity extends AppCompatActivity {
 
                     case R.id.orderOptionsnProcess:
                         ProcessOrders(classContext, multiSelectedOrders, GetPreferredLocationUUIDfromName(classContext));
+                        break;
+                    case R.id.orderOptionsnPrint:
+                        Intent printIntent = new Intent(classContext, PrintActivity.class);
+                        classContext.startActivity(printIntent);
                         break;
 
                 }

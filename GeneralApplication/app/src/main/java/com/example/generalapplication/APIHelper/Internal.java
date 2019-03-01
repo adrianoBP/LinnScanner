@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.URLUtil;
+import android.widget.ArrayAdapter;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,8 +23,10 @@ import com.example.generalapplication.Classes.FieldSorting;
 import com.example.generalapplication.Classes.FieldsFilter;
 import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
+import com.example.generalapplication.Classes.PrinterStatus;
 import com.example.generalapplication.Classes.TextFieldFilter;
 import com.example.generalapplication.Classes.TextFieldFilterType;
+import com.example.generalapplication.Classes.VirtualPrinter;
 import com.example.generalapplication.R;
 
 import org.json.JSONArray;
@@ -45,6 +48,7 @@ import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUU
 import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.Core.allLocations;
 import static com.example.generalapplication.Helpers.Core.allOrders;
+import static com.example.generalapplication.Helpers.Core.allPrinters;
 import static com.example.generalapplication.Helpers.Core.allSources;
 import static com.example.generalapplication.Helpers.Parser.ParseJSONToOrderDetails;
 import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
@@ -705,4 +709,82 @@ public class Internal {
         requestQueue.add(sendJsonRequest);
 
     }
-}
+
+    public static void GetVirtualPrinters(final Context context){
+
+        final String logLocation = "API.INT.GETPRNT";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/PrintService/VP_GetPrinters";
+
+            StringRequest processOrder = new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            List<String> printerLocations = new ArrayList<>();
+
+                            try {
+                                JSONArray responseArray = new JSONArray(response);
+                                allPrinters = new ArrayList<>();
+                                for (int i = 0; i < responseArray.length(); i++) {
+
+                                    final JSONObject printerObject = responseArray.getJSONObject(i);
+
+                                    if(printerObject.has("PrinterLocationName") && printerObject.has("PrinterName") && printerObject.has("Status")) {
+                                        VirtualPrinter printer = new VirtualPrinter(){{
+                                            PrinterLocationName = printerObject.getString("PrinterLocationName");
+                                            PrinterName = printerObject.getString("PrinterName");
+                                            Status = PrinterStatus.valueOf(printerObject.getString("Status"));
+                                        }};
+                                        allPrinters.add(printer);
+                                        printerLocations.add(printer.PrinterLocationName + "/" + printer.PrinterName);
+                                    }
+                                }
+
+                                if(allPrinters.size() > 0) {
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                                            android.R.layout.simple_spinner_item, printerLocations);
+                                    // TODO: update Spinner
+
+                                }
+
+                            }catch (Exception ex){
+                                Log.e(logLocation, ex.getMessage());
+                                CreateBasicSnack("Error while retrieving the printers!", null, context);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            try {
+                                JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                                String errorMessage = errorObject.getString("Message");
+                                Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                                CreateBasicSnack(errorMessage, null, context);
+                            } catch (Exception ex) {
+                                Log.e(logLocation, ex.getMessage());
+                            }
+                        }
+                    }
+            ) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/x-www-form-urlencoded; charset=UTF-8";
+                }
+
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                    return params;
+                }
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            requestQueue.add(processOrder);
+        }
+    }

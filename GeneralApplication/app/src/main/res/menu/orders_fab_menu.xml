@@ -12,6 +12,11 @@
         android:title="Process orders"
         />
     <item
+        android:id="@+id/orderOptionsnPrint"
+        android:icon="@drawable/ic_printer"
+        android:title="Process orders"
+        />
+    <item
         android:id="@+id/orderOptionsnAddScans"
         android:icon="@drawable/ic_add"
         android:title="Add barcodes"

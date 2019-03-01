@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.example.generalapplication.Classes.CustomSource;
 import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
+import com.example.generalapplication.Classes.VirtualPrinter;
 import com.example.generalapplication.R;
 
 import java.util.ArrayList;
@@ -28,12 +29,14 @@ public class Core {
     public static List<InventoryStockLocation> allLocations;
     public static List<String> allBarcodes;
     public static Map<String, CustomSource> allSources;
+    public static List<VirtualPrinter> allPrinters;
 
     public static void CoreInit(Context context){
         allLocations = new ArrayList<>();
         allOrders = new ArrayList<>();
         allBarcodes = new ArrayList<>();
         allSources = new HashMap<>();
+        allPrinters = new ArrayList<>();
 
         GetStockLocations(context);
         GetAllSources(context);
