@@ -110,8 +110,10 @@ public class OrdersActivity extends AppCompatActivity {
                         ProcessOrders(classContext, multiSelectedOrders, GetPreferredLocationUUIDfromName(classContext));
                         break;
                     case R.id.orderOptionsnPrint:
-                        Intent printIntent = new Intent(classContext, PrintActivity.class);
-                        classContext.startActivity(printIntent);
+                        if(multiSelectedOrders.size() > 0){
+                            Intent printIntent = new Intent(classContext, PrintActivity.class);
+                            classContext.startActivity(printIntent);
+                        }
                         break;
 
                 }
