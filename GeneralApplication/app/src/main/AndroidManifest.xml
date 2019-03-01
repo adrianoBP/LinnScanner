@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".Activities.ScannerActivity"></activity>
+        <activity android:name=".Activities.PrintActivity"></activity>
+        <activity android:name=".Activities.ScannerActivity" />
         <activity
             android:name=".Activities.LoginActivity"
             tools:ignore="InnerclassSeparator">
