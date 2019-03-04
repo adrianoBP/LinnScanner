@@ -73,9 +73,6 @@ public class OrderAdapter extends BaseAdapter {
         TextView tvSource = view.findViewById(R.id.tvSource);
         TextView tvSubsrouce = view.findViewById(R.id.tvSubsource);
 
-//        ivInvoice.setColorFilter(classContext.getResources().getColor(R.color.commonGreyLight));
-//        ivShippingLabel.setColorFilter(classContext.getResources().getColor(R.color.commonGreyLight));
-
         if(allSources.containsKey(currentOrder.GeneralInfo.Source)){
             final String url  = allSources.get(currentOrder.GeneralInfo.Source).imageUrl;
 

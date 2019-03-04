@@ -6,17 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".Activities.PrintActivity">
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.constraint.ConstraintLayout>
+
     <Spinner
         android:id="@+id/sPrinters"
         android:layout_width="0dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvNOrdersToPrint" />
+        app:layout_constraintStart_toStartOf="@+id/tvUIPrinter"
+        app:layout_constraintTop_toBottomOf="@+id/tvUIPrinter" />
+
+    <Spinner
+        android:id="@+id/sTemplateTypes"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/sPrinters"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvUITemplateType"
+        app:layout_constraintTop_toBottomOf="@+id/tvUITemplateType" />
+
+    <Spinner
+        android:id="@+id/sTemplateId"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/sPrinters"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvUITemplateName"
+        app:layout_constraintTop_toBottomOf="@+id/tvUITemplateName" />
 
     <Button
         android:id="@+id/bPrint"
@@ -35,7 +60,7 @@
         android:id="@+id/tvUIOrdersToPrint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="64dp"
         android:text="Number of order to print: "
         app:layout_constraintStart_toStartOf="parent"
@@ -54,5 +79,33 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/tvUIOrdersToPrint"
         app:layout_constraintTop_toTopOf="@+id/tvUIOrdersToPrint" />
+
+    <TextView
+        android:id="@+id/tvUIPrinter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Printer:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNOrdersToPrint" />
+
+    <TextView
+        android:id="@+id/tvUITemplateType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Template type:"
+        app:layout_constraintStart_toStartOf="@+id/sPrinters"
+        app:layout_constraintTop_toBottomOf="@+id/sPrinters" />
+
+    <TextView
+        android:id="@+id/tvUITemplateName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Template name: "
+        app:layout_constraintStart_toStartOf="@+id/sTemplateTypes"
+        app:layout_constraintTop_toBottomOf="@+id/sTemplateTypes" />
 
 </android.support.constraint.ConstraintLayout>

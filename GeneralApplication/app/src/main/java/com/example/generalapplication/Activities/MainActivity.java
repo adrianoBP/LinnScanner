@@ -22,6 +22,8 @@ import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: add settings: 1) print regardless printed status
+
     View vHome, vOrders;
     public  static LinearLayout llMainLayout;
     public static List<View> views;

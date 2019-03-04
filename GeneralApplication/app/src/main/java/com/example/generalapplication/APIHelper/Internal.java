@@ -24,6 +24,7 @@ import com.example.generalapplication.Classes.FieldsFilter;
 import com.example.generalapplication.Classes.InventoryStockLocation;
 import com.example.generalapplication.Classes.OrderDetails;
 import com.example.generalapplication.Classes.PrinterStatus;
+import com.example.generalapplication.Classes.TemplateHeader;
 import com.example.generalapplication.Classes.TextFieldFilter;
 import com.example.generalapplication.Classes.TextFieldFilterType;
 import com.example.generalapplication.Classes.VirtualPrinter;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
+import static com.example.generalapplication.Activities.PrintActivity.allTemplates;
 import static com.example.generalapplication.Activities.PrintActivity.sPrinters;
 import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 import static com.example.generalapplication.Helpers.Core.GetLocationNames;
@@ -57,6 +59,7 @@ import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 import static com.example.generalapplication.Helpers.Core.IsNullOrEmpty;
 import static com.example.generalapplication.Helpers.Core.ReadPreference;
 import static com.example.generalapplication.Helpers.Core.WritePreference;
+import static com.example.generalapplication.Helpers.UI.UpdateTemplateTypes;
 import static com.example.generalapplication.Helpers.UI.orderAdapter;
 
 public class Internal {
@@ -787,4 +790,78 @@ public class Internal {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(processOrder);
         }
+
+    public static void GetTemplateList(final Context context, final Boolean updateUI){
+
+        final String logLocation = "API.INT.GETTPL";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/PrintService/GetTemplateList";
+
+        StringRequest processOrder = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        List<String> printerLocations = new ArrayList<>();
+
+                        try {
+                            JSONArray responseArray = new JSONArray(response);
+                            allTemplates = new HashMap<>();
+                            for (int i = 0; i < responseArray.length(); i++) {
+
+                                final JSONObject templateObjects = responseArray.getJSONObject(i);
+
+                                if(templateObjects.has("TemplateId") && templateObjects.has("TemplateType") && templateObjects.has("TemplateName")) {
+                                    TemplateHeader template = new TemplateHeader(){{
+                                        TemplateId = UUID.fromString(templateObjects.getString("TemplateId"));
+                                        TemplateType = templateObjects.getString("TemplateType");
+                                        TemplateName = templateObjects.getString("TemplateName");
+                                    }};
+                                    allTemplates.put(UUID.fromString(templateObjects.getString("TemplateId")), template);
+                                }
+                            }
+
+                            if(updateUI && allTemplates.size() > 0){
+                                UpdateTemplateTypes(context);
+                            }
+
+                        }catch (Exception ex){
+                            Log.e(logLocation, ex.getMessage());
+                            CreateBasicSnack("Error while retrieving the Templates!", null, context);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
+                            JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                            String errorMessage = errorObject.getString("Message");
+                            Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                            CreateBasicSnack(errorMessage, null, context);
+                        } catch (Exception ex) {
+                            Log.e(logLocation, ex.getMessage());
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(processOrder);
+    }
     }
