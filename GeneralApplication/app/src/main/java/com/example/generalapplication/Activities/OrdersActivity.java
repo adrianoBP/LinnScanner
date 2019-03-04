@@ -27,6 +27,7 @@ import static com.example.generalapplication.Helpers.Core.GetLocationNames;
 import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUUIDfromName;
 import static com.example.generalapplication.Helpers.Core.ReadPreference;
 import static com.example.generalapplication.Helpers.Core.WritePreference;
+import static com.example.generalapplication.Helpers.UI.CreateBasicSnack;
 import static com.example.generalapplication.Helpers.UI.orderAdapter;
 
 public class OrdersActivity extends AppCompatActivity {
@@ -113,6 +114,8 @@ public class OrdersActivity extends AppCompatActivity {
                         if(multiSelectedOrders.size() > 0){
                             Intent printIntent = new Intent(classContext, PrintActivity.class);
                             classContext.startActivity(printIntent);
+                        }else {
+                            CreateBasicSnack("Please select at least one orders.", null, context);
                         }
                         break;
 

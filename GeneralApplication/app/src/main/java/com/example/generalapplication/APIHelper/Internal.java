@@ -45,6 +45,7 @@ import java.util.UUID;
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
 import static com.example.generalapplication.Activities.PrintActivity.sPrinters;
 import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
+import static com.example.generalapplication.Helpers.Core.GetLocationNames;
 import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUUIDfromName;
 import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.Core.allLocations;
@@ -745,11 +746,8 @@ public class Internal {
                                 }
 
                                 if(allPrinters.size() > 0) {
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
-                                            android.R.layout.simple_spinner_item, printerLocations);
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context,android.R.layout.simple_dropdown_item_1line,printerLocations);
                                     sPrinters.setAdapter(adapter);
-                                    // TODO: spinner layout
-
                                 }
 
                             }catch (Exception ex){

@@ -14,7 +14,7 @@
     <item
         android:id="@+id/orderOptionsnPrint"
         android:icon="@drawable/ic_printer"
-        android:title="Process orders"
+        android:title="Print orders"
         />
     <item
         android:id="@+id/orderOptionsnAddScans"
