@@ -19,8 +19,7 @@ import static com.example.generalapplication.APIHelper.Internal.GetTemplateList;
 import static com.example.generalapplication.Activities.MainActivity.llMainLayout;
 import static com.example.generalapplication.Activities.MainActivity.views;
 import static com.example.generalapplication.Activities.PrintActivity.allTemplates;
-import static com.example.generalapplication.Activities.PrintActivity.sPrinters;
-import static com.example.generalapplication.Activities.PrintActivity.sTemplateId;
+import static com.example.generalapplication.Activities.PrintActivity.sTemplateName;
 import static com.example.generalapplication.Activities.PrintActivity.sTemplateType;
 
 public class UI {
@@ -85,7 +84,7 @@ public class UI {
             }
             if(templateNames.size() > 0){
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(context,android.R.layout.simple_dropdown_item_1line, templateNames);
-                sTemplateId.setAdapter(adapter);
+                sTemplateName.setAdapter(adapter);
             }else{
                 CreateBasicSnack("Unable to retrieve template names from template type.", null, context);
             }

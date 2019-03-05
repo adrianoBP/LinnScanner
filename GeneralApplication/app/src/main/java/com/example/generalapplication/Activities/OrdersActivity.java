@@ -53,6 +53,8 @@ public class OrdersActivity extends AppCompatActivity {
         orderAdapter = new OrderAdapter(classContext);
         lvOrders.setAdapter(orderAdapter);
 
+
+
         fabOrderActions.setMenuListener(new FabSpeedDial.MenuListener() {
             @Override
             public boolean onPrepareMenu(NavigationMenu navigationMenu) {
@@ -108,7 +110,20 @@ public class OrdersActivity extends AppCompatActivity {
                         break;
 
                     case R.id.orderOptionsnProcess:
-                        ProcessOrders(classContext, multiSelectedOrders, GetPreferredLocationUUIDfromName(classContext));
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        ProcessOrders(classContext, multiSelectedOrders, GetPreferredLocationUUIDfromName(classContext));
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Are you sure you want to process " + multiSelectedOrders.size() + " order(s)?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
                         break;
                     case R.id.orderOptionsnPrint:
                         if(multiSelectedOrders.size() > 0){

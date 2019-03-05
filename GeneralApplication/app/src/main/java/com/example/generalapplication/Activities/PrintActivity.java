@@ -4,18 +4,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.generalapplication.Classes.TemplateHeader;
-import com.example.generalapplication.Classes.VirtualPrinter;
 import com.example.generalapplication.R;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.example.generalapplication.APIHelper.Internal.CreatePDFfromJobForceTemplate;
 import static com.example.generalapplication.APIHelper.Internal.GetVirtualPrinters;
 import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
 import static com.example.generalapplication.Helpers.UI.UpdateTemplateNames;
@@ -23,8 +23,9 @@ import static com.example.generalapplication.Helpers.UI.UpdateTemplateTypes;
 
 public class PrintActivity extends AppCompatActivity {
 
-    public static Spinner sPrinters, sTemplateType, sTemplateId;
+    public static Spinner sPrinters, sTemplateType, sTemplateName;
     TextView tvOrdersToPrint;
+    Button bPrint;
     public static Map<UUID, TemplateHeader> allTemplates = new HashMap<>();
 
     @Override
@@ -34,8 +35,9 @@ public class PrintActivity extends AppCompatActivity {
 
         sPrinters = findViewById(R.id.sPrinters);
         sTemplateType = findViewById(R.id.sTemplateTypes);
-        sTemplateId = findViewById(R.id.sTemplateId);
+        sTemplateName = findViewById(R.id.sTemplateName);
         tvOrdersToPrint = findViewById(R.id.tvNOrdersToPrint);
+        bPrint = findViewById(R.id.bPrint);
 
         tvOrdersToPrint.setText(multiSelectedOrders.size() + "");
 
@@ -55,7 +57,11 @@ public class PrintActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: add selection of printing type
-
+        bPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreatePDFfromJobForceTemplate(PrintActivity.this);
+            }
+        });
     }
 }

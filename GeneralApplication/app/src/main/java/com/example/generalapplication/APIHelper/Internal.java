@@ -1,9 +1,9 @@
 package com.example.generalapplication.APIHelper;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.generalapplication.Activities.MainActivity;
+import com.example.generalapplication.Activities.OrdersActivity;
 import com.example.generalapplication.Classes.CustomSource;
 import com.example.generalapplication.Classes.FieldCode;
 import com.example.generalapplication.Classes.FieldSorting;
@@ -29,13 +30,12 @@ import com.example.generalapplication.Classes.TextFieldFilter;
 import com.example.generalapplication.Classes.TextFieldFilterType;
 import com.example.generalapplication.Classes.VirtualPrinter;
 import com.example.generalapplication.R;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,8 +46,9 @@ import java.util.UUID;
 import static com.example.generalapplication.APIHelper.External.RetrieveUserInformation;
 import static com.example.generalapplication.Activities.PrintActivity.allTemplates;
 import static com.example.generalapplication.Activities.PrintActivity.sPrinters;
+import static com.example.generalapplication.Activities.PrintActivity.sTemplateName;
+import static com.example.generalapplication.Activities.PrintActivity.sTemplateType;
 import static com.example.generalapplication.Adapters.OrderAdapter.multiSelectedOrders;
-import static com.example.generalapplication.Helpers.Core.GetLocationNames;
 import static com.example.generalapplication.Helpers.Core.GetPreferredLocationUUIDfromName;
 import static com.example.generalapplication.Helpers.Core.allBarcodes;
 import static com.example.generalapplication.Helpers.Core.allLocations;
@@ -166,7 +167,7 @@ public class Internal {
                                 WritePreference(context, context.getString(R.string.preference_linnworksServer), server);
                                 WritePreference(context, context.getString(R.string.preference_linnworksToken), token);
 
-                                // TODO: change this ( option / setting  )
+                                // TODO: change this in order to enable/disable this feature ( option / setting  )
                                 WritePreference(context, context.getString(R.string.preference_saveLogin), "YES");
 
                                 if(startApplication){
@@ -554,6 +555,7 @@ public class Internal {
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/Orders/ProcessOrder";
 
         final List<UUID> activeCalls = new ArrayList<>();
+        final boolean[] showError = {false};
 
         for(final UUID orderID : orderIDs) {
 
@@ -572,19 +574,22 @@ public class Internal {
 
                                 if(responseObject.has("Error")){
                                     Log.e(logLocation, responseObject.getString("Error"));
-                                }else{
-                                    activeCalls.remove(currentCallID);
-                                    if (activeCalls.size() == 0) {
-//                                RemoveProcessedOrders();
-                                        GetAllOrdersByBarcodes(context, true, false);
-                                        Log.i(logLocation, "Order(s) processed.");
-                                    }
+                                    showError[0] = true;
                                 }
-
 
                             }catch (Exception ex){
                                 Log.e(logLocation, ex.getMessage());
                                 CreateBasicSnack("Error while processing the order(s)!", null, context);
+                            }finally {
+                                activeCalls.remove(currentCallID);
+                                if (activeCalls.size() == 0) {
+                                    if (showError[0]){
+                                        CreateBasicSnack("Unable to process one or more orders!", null, context);
+                                    }else{
+                                        Log.i(logLocation, "Order(s) processed.");
+                                    }
+                                    GetAllOrdersByBarcodes(context, true, false);
+                                }
                             }
                         }
                     },
@@ -595,7 +600,7 @@ public class Internal {
                                 JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
                                 String errorMessage = errorObject.getString("Message");
                                 Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
-                                CreateBasicSnack(errorMessage, null, context);
+
                             } catch (Exception ex) {
                                 Log.e(logLocation, ex.getMessage());
                             }finally {
@@ -721,7 +726,7 @@ public class Internal {
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/PrintService/VP_GetPrinters";
 
-            StringRequest processOrder = new StringRequest(
+            StringRequest getPrinters = new StringRequest(
                     Request.Method.POST,
                     url,
                     new Response.Listener<String>() {
@@ -744,7 +749,7 @@ public class Internal {
                                             Status = PrinterStatus.valueOf(printerObject.getString("Status"));
                                         }};
                                         allPrinters.add(printer);
-                                        printerLocations.add(printer.PrinterLocationName + "/" + printer.PrinterName);
+                                        printerLocations.add(printer.PrinterLocationName + "\\" + printer.PrinterName);
                                     }
                                 }
 
@@ -788,7 +793,7 @@ public class Internal {
             };
 
             RequestQueue requestQueue = Volley.newRequestQueue(context);
-            requestQueue.add(processOrder);
+            requestQueue.add(getPrinters);
         }
 
     public static void GetTemplateList(final Context context, final Boolean updateUI){
@@ -797,14 +802,12 @@ public class Internal {
 
         String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/PrintService/GetTemplateList";
 
-        StringRequest processOrder = new StringRequest(
+        StringRequest getTemplateList = new StringRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
-                        List<String> printerLocations = new ArrayList<>();
 
                         try {
                             JSONArray responseArray = new JSONArray(response);
@@ -818,6 +821,7 @@ public class Internal {
                                         TemplateId = UUID.fromString(templateObjects.getString("TemplateId"));
                                         TemplateType = templateObjects.getString("TemplateType");
                                         TemplateName = templateObjects.getString("TemplateName");
+                                        pkTemplateRowId = templateObjects.getInt("pkTemplateRowId");
                                     }};
                                     allTemplates.put(UUID.fromString(templateObjects.getString("TemplateId")), template);
                                 }
@@ -862,6 +866,92 @@ public class Internal {
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        requestQueue.add(processOrder);
+        requestQueue.add(getTemplateList);
     }
+
+    public static void CreatePDFfromJobForceTemplate(final Context context) {
+
+        final String logLocation = "API.INT.PRINT";
+
+        String url = ReadPreference(context, context.getString(R.string.preference_linnworksServer)) + "/api/PrintService/CreatePDFfromJobForceTemplate";
+
+        StringRequest postPrint = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject responseObject = new JSONObject(response);
+
+                            if(responseObject.getJSONArray("PrintErrors").length() > 0){
+                                JSONArray errorsArray = responseObject.getJSONArray("PrintErrors");
+                                CreateBasicSnack("Error while printing the label(s). Please check your printers.", null, context);
+                                for (int i = 0; i < errorsArray.length(); i++){
+                                    JSONObject errorObj = errorsArray.getJSONObject(i);
+                                    Log.e(logLocation, errorObj.toString());
+                                }
+                            }else{
+                                CreateBasicSnack("Label(s) printed correctly.", null, context);
+                                GetAllOrdersByBarcodes(context, true, false);
+                            }
+
+                        } catch (Exception ex) {
+                            Log.e(logLocation, ex.getMessage());
+                            CreateBasicSnack("Error while printing the label(s)!", null, context);
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
+                            JSONObject errorObject = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                            String errorMessage = errorObject.getString("Message");
+                            Log.e(logLocation, error.networkResponse.statusCode + " | " + errorMessage);
+                            CreateBasicSnack(errorMessage, null, context);
+                        } catch (Exception ex) {
+                            Log.e(logLocation, ex.getMessage());
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                params.put("Authorization", ReadPreference(context, context.getString(R.string.preference_linnworksToken)));
+                return params;
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+
+                int templateId = -1;
+                for (TemplateHeader template:
+                        allTemplates.values()) {
+                    if(template.TemplateType.equals(sTemplateType.getSelectedItem().toString()) && template.TemplateName.equals(sTemplateName.getSelectedItem().toString())){
+                        templateId = template.pkTemplateRowId;
+                    }
+                }
+
+                Map<String, String> params = new HashMap<>();
+                params.put("templateType", sTemplateType.getSelectedItem().toString());
+                params.put("IDs", new Gson().toJson(multiSelectedOrders));
+                if(templateId >= 0)
+                    params.put("templateId", String.valueOf(templateId));
+                params.put("printerName", sPrinters.getSelectedItem().toString());
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(postPrint);
     }
+}
