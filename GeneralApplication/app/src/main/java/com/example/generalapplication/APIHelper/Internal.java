@@ -1,7 +1,6 @@
 package com.example.generalapplication.APIHelper;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -17,7 +16,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.generalapplication.Activities.MainActivity;
-import com.example.generalapplication.Activities.OrdersActivity;
 import com.example.generalapplication.Classes.CustomSource;
 import com.example.generalapplication.Classes.FieldCode;
 import com.example.generalapplication.Classes.FieldSorting;

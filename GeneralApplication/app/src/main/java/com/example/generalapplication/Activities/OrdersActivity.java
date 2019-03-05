@@ -1,6 +1,5 @@
 package com.example.generalapplication.Activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.example.generalapplication.Adapters.OrderAdapter;
-import com.example.generalapplication.Classes.PrinterStatus;
 import com.example.generalapplication.R;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;

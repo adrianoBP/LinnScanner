@@ -37,7 +37,6 @@ public class External {
                         boolean displayError = false;
 
                         try{
-
                             String error = response.getString("Error");
                             if(IsNullOrEmpty(error)){
 

@@ -138,7 +138,7 @@ public class Parser {
                 scheduledDelivery.from = GetDateFromString(generalInfoObject.getString("From"));
                 scheduledDelivery.to = GetDateFromString(generalInfoObject.getString("To"));
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(logLocation, e.getMessage());
             }
         }
 
@@ -147,14 +147,14 @@ public class Parser {
 
     public static Date GetDateFromString(String date){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date formatteDate = new Date();
+        Date formattedDate = new Date();
         try {
-            formatteDate = format.parse(date);
+            formattedDate = format.parse(date);
             System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return formatteDate;
+        return formattedDate;
     }
 
     public static String GetStringFromDate(Date date){
